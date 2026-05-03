@@ -154,6 +154,7 @@ function getAverageSpeed(distance, duration, manualSpeed) {
 
 function addPerformanceEntry(entry) {
     athleteEntries.unshift(entry);
+    saveAthleteEntriesToStorage();
     updateAthleteTable();
     updateCoachStats();
     drawProgressChart();
@@ -189,6 +190,9 @@ function updateAthleteTable() {
             <td>${entry.distance} km</td>
             <td>${entry.duration} min</td>
             <td>${entry.speed} km/h</td>
+            <td>${entry.water ? `${entry.water} L` : '-'}</td>
+            <td>${entry.drink ? `${entry.drink} ml` : '-'}</td>
+            <td>${entry.food ? entry.food : '-'}</td>
             <td>${entry.source}</td>
         </tr>
     `).join('');
@@ -282,6 +286,23 @@ function saveAssignedPrograms() {
     localStorage.setItem('suivi-athlete-programs', JSON.stringify(assignedPrograms));
 }
 
+function saveAthleteEntriesToStorage() {
+    localStorage.setItem('suivi-athlete-entries', JSON.stringify(athleteEntries));
+}
+
+function loadAthleteEntriesFromStorage() {
+    try {
+        const stored = localStorage.getItem('suivi-athlete-entries');
+        if (!stored) return;
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+            athleteEntries = parsed;
+        }
+    } catch (error) {
+        console.warn('Impossible de charger les séances enregistrées', error);
+    }
+}
+
 function loadAccountsFromStorage() {
     try {
         const stored = localStorage.getItem('suivi-athlete-accounts');
@@ -351,6 +372,7 @@ function loadAssignedPrograms() {
 function loadUserFromStorage() {
     loadAccountsFromStorage();
     loadAssignedPrograms();
+    loadAthleteEntriesFromStorage();
     populateAthleteSelector();
     const stored = localStorage.getItem('suivi-athlete-user');
     if (!stored) {
@@ -730,6 +752,9 @@ function handleFormSubmit(event) {
     const distance = parseFloat(formData.get('distance')) || 0;
     const duration = parseFloat(formData.get('duration')) || 0;
     const manualSpeed = parseFloat(formData.get('speed')) || 0;
+    const water = parseFloat(formData.get('water')) || 0;
+    const drink = parseFloat(formData.get('drink')) || 0;
+    const food = (formData.get('food') || '').trim();
     const photo = formData.get('photo');
 
     if (currentUser && currentUser.role === 'athlete') {
@@ -751,7 +776,17 @@ function handleFormSubmit(event) {
         }
     }
 
-    addPerformanceEntry({ name, date, distance: distance.toFixed(1), duration: duration.toFixed(0), speed, source });
+    addPerformanceEntry({
+        name,
+        date,
+        distance: distance.toFixed(1),
+        duration: duration.toFixed(0),
+        speed,
+        water: water > 0 ? water.toFixed(1) : '',
+        drink: drink > 0 ? drink.toFixed(0) : '',
+        food,
+        source
+    });
     resetForm();
 }
 

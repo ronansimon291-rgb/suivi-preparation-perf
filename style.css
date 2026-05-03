@@ -636,15 +636,32 @@ button {
     background: rgba(61, 208, 255, 0.06);
 }
 
+@media (max-width: 1024px) {
+    .app-shell {
+        width: min(100%, calc(100% - 32px));
+        padding: 24px 16px 36px;
+    }
+
+    .calendar-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .hero {
+        padding: 24px;
+    }
+}
+
 @media (max-width: 900px) {
     .stats-grid,
     .goal-list,
     .athlete-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-}
 
-@media (max-width: 780px) {
+    .calendar-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .plan-intro,
     .detail-header,
     .stat-panel-header,
@@ -652,36 +669,59 @@ button {
         flex-direction: column;
         align-items: stretch;
     }
+}
+
+@media (max-width: 780px) {
+    .login-card {
+        max-width: 100%;
+        padding: 24px;
+    }
+
+    .hero-image {
+        max-width: 260px;
+    }
 
     .calendar-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .dashboard-split {
+    .athlete-grid,
+    .dashboard-split,
+    .stats-grid,
+    .goal-list {
+        grid-template-columns: 1fr;
+    }
+
+    .input-grid {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 680px) {
     .app-shell {
-        width: min(100%, calc(100% - 20px));
-    }
-
-    .calendar-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        padding: 18px 12px 32px;
     }
 
     .hero {
         border-radius: 24px;
     }
 
-    .stats-grid,
-    .goal-list {
-        grid-template-columns: 1fr;
+    .calendar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .athlete-grid {
-        grid-template-columns: 1fr;
+    .day-card {
+        min-height: 96px;
+        padding: 16px;
+    }
+
+    .session-detail,
+    .stat-panel,
+    .goal-list,
+    .table-panel,
+    .card {
+        padding: 20px;
     }
 }
 
@@ -695,6 +735,28 @@ button {
     .primary-btn {
         width: 100%;
         text-align: center;
+        padding: 16px 18px;
+    }
+
+    .auth-toggle-btn {
+        padding: 14px 12px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-copy,
+    .login-copy,
+    .hint-text,
+    .stat-label,
+    .athlete-table th,
+    .athlete-table td {
+        font-size: 0.95rem;
+    }
+
+    .athlete-table {
+        min-width: 100%;
     }
 }
 
@@ -732,42 +794,9 @@ canvas {
     margin: 0;
 }
 
-@media (max-width: 900px) {
-    .stats-grid,
-    .goal-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 680px) {
-    .app-shell {
-        width: min(100%, calc(100% - 20px));
-    }
-
-    .calendar-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .hero {
-        border-radius: 24px;
-    }
-
-    .stats-grid,
-    .goal-list {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 500px) {
-    .calendar-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .tab-btn,
-    .secondary-btn {
-        width: 100%;
-        text-align: center;
-    }
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 @keyframes fadeIn {

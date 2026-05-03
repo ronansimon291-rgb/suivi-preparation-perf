@@ -1,0 +1,61 @@
+{
+  "athlete": "NOM_ATHLETE_1",
+  "sessions": [
+    {
+      "day": "Lundi",
+      "title": "Natation Endurance",
+      "duration": "45 min",
+      "intensity": "Z2",
+      "workout": "2000m échauffement / 8x200m @ 1'45'' / 1000m récupération",
+      "description": "Développement de l'endurance en natation"
+    },
+    {
+      "day": "Mardi",
+      "title": "Entraînement Vélo Intervals",
+      "duration": "1h15",
+      "intensity": "Z4",
+      "workout": "15min Warm-up / 6x (3min @ 110% FTP + 3min récupération) / 10min Cool-down",
+      "description": "Améliorer la puissance brute"
+    },
+    {
+      "day": "Mercredi",
+      "title": "Course à Pied Tempo",
+      "duration": "50 min",
+      "intensity": "Z3",
+      "workout": "10min échauffement / 30min tempo @ 4'30''/km / 10min récupération",
+      "description": "Travail au seuil en course à pied"
+    },
+    {
+      "day": "Jeudi",
+      "title": "Préparation Physique Générale",
+      "duration": "30 min",
+      "intensity": "Z0",
+      "workout": "Circuit musculation : squats, pompes, gainage",
+      "description": "Renforcement musculaire général"
+    },
+    {
+      "day": "Vendredi",
+      "title": "Repos Actif",
+      "duration": "20 min",
+      "intensity": "Z0",
+      "workout": "Marche légère ou yoga",
+      "description": "Récupération active"
+    },
+    {
+      "day": "Samedi",
+      "title": "Vélo Sortie Longue",
+      "duration": "3h00",
+      "intensity": "Z2",
+      "workout": "Sortie longue en endurance",
+      "description": "Développement de l'endurance"
+    },
+    {
+      "day": "Dimanche",
+      "title": "Natation Technique",
+      "duration": "40 min",
+      "intensity": "Z1",
+      "workout": "2000m technique brasse et crawl",
+      "description": "Amélioration technique"
+    }
+  ]
+}

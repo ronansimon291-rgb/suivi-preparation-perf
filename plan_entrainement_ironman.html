@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Ironman 2027 - Plan d'Entraînement</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-screen" id="loginScreen" aria-modal="true" role="dialog" tabindex="-1">
+        <div class="login-card">
+            <div class="hero-section">
+                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Norseman Xtreme Triathlon - Le grand plongeon du ferry" class="hero-image">
+                <h1 class="hero-title">Ironman 2027</h1>
+                <p class="hero-subtitle">No Pain, No Gain - Repoussez vos limites !</p>
+            </div>
+            <div class="auth-toggle">
+                <button type="button" class="auth-toggle-btn active" data-auth="login">Connexion</button>
+                <button type="button" class="auth-toggle-btn" data-auth="register">Créer un compte</button>
+            </div>
+            <div class="auth-content">
+                <form id="login-form" class="auth-form active">
+                    <h2>Connexion</h2>
+                    <p class="login-copy">Entrez votre identifiant et mot de passe pour accéder à votre espace.</p>
+                    <label>
+                        Identifiant
+                        <input type="text" name="username" autocomplete="username" required />
+                    </label>
+                    <label>
+                        Mot de passe
+                        <input type="password" name="password" autocomplete="current-password" required />
+                    </label>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">Se connecter</button>
+                    </div>
+                    <p class="login-hint">Compte entraîneur : <strong>coach</strong> / <strong>trainadmin</strong></p>
+                    <p class="error-message" id="login-error" aria-live="assertive"></p>
+                </form>
+                <form id="register-form" class="auth-form hidden">
+                    <h2>Créer un compte athlète</h2>
+                    <p class="login-copy">Les athlètes peuvent créer leur identifiant et mot de passe ici.</p>
+                    <label>
+                        Nom affiché
+                        <input type="text" name="displayName" autocomplete="name" required />
+                    </label>
+                    <label>
+                        Identifiant
+                        <input type="text" name="newUsername" autocomplete="username" required />
+                    </label>
+                    <label>
+                        Mot de passe
+                        <input type="password" name="newPassword" autocomplete="new-password" required />
+                    </label>
+                    <label>
+                        Confirmer mot de passe
+                        <input type="password" name="confirmPassword" autocomplete="new-password" required />
+                    </label>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">Créer le compte</button>
+                    </div>
+                    <p class="hint-text">Utilisez un identifiant unique pour vous connecter ensuite.</p>
+                    <p class="error-message" id="register-error" aria-live="assertive"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-shell">
+        <div class="user-banner" id="user-banner" hidden>
+            <div>
+                <span id="user-name"></span>
+                <span class="user-role" id="user-role"></span>
+            </div>
+            <button type="button" class="secondary-btn" id="logout-btn">Déconnexion</button>
+        </div>
+
+        <header class="hero">
+            <div>
+                <span class="eyebrow">Ironman 2027</span>
+                <h1>Tableau de bord d'entraînement vélo</h1>
+                <p class="hero-copy"><strong>No Pain, No Gain</strong> - Repoussez vos limites !</p>
+            </div>
+            <div class="hero-badge">4 séances clés • 7 jours de suivi</div>
+        </header>
+
+        <nav class="tabs" role="tablist" aria-label="Navigation du tableau de bord">
+            <button type="button" class="tab-btn active" data-tab="plan">Programme Hebdo</button>
+            <button type="button" class="tab-btn" data-tab="dashboard">Tableau de bord</button>
+            <button type="button" class="tab-btn" data-tab="athletes">Athlètes</button>
+        </nav>
+
+        <main class="content">
+            <section id="plan" class="tab-panel active" role="tabpanel">
+                <div class="plan-intro">
+                    <div>
+                        <h2>Calendrier des séances</h2>
+                        <p>Affichez le planning hebdomadaire des séances et sélectionnez une journée pour vérifier les détails.</p>
+                    </div>
+                    <div class="legend-block">
+                        <span class="legend-badge legend-rest">Repos</span>
+                        <span class="legend-badge legend-interval">Intervalles</span>
+                        <span class="legend-badge legend-threshold">Seuil</span>
+                        <span class="legend-badge legend-long">Sortie Longue</span>
+                    </div>
+                </div>
+
+                <div class="calendar-grid" aria-label="Planning hebdomadaire">
+                    <button type="button" class="day-card" data-day="Lundi">
+                        <span class="day-name">Lun</span>
+                        <span class="day-type">Repos</span>
+                    </button>
+                    <button type="button" class="day-card" data-day="Mardi">
+                        <span class="day-name">Mar</span>
+                        <span class="day-type">Intervalles</span>
+                    </button>
+                    <button type="button" class="day-card" data-day="Mercredi">
+                        <span class="day-name">Mer</span>
+                        <span class="day-type">Repos</span>
+                    </button>
+                    <button type="button" class="day-card" data-day="Jeudi">
+                        <span class="day-name">Jeu</span>
+                        <span class="day-type">Seuil</span>
+                    </button>
+                    <button type="button" class="day-card" data-day="Vendredi">
+                        <span class="day-name">Ven</span>
+                        <span class="day-type">Repos</span>
+                    </button>
+                    <button type="button" class="day-card" data-day="Samedi">
+                        <span class="day-name">Sam</span>
+                        <span class="day-type">Sortie Longue</span>
+                    </button>
+                    <button type="button" class="day-card" data-day="Dimanche">
+                        <span class="day-name">Dim</span>
+                        <span class="day-type">Récupération</span>
+                    </button>
+                </div>
+
+                <article id="session-detail" class="session-detail" aria-live="polite">
+                    <div class="detail-header">
+                        <div>
+                            <h2>Sélectionnez un jour</h2>
+                            <p>Appuyez sur une carte pour afficher la séance détaillée. Chaque séance est conçue pour vos athlètes.</p>
+                        </div>
+                        <span class="tag">7 jours</span>
+                    </div>
+                    <div class="detail-copy">
+                        <p>Vous pouvez suivre les séances d'entraînement, visualiser le contenu et ajuster les tâches pour chaque athlète.</p>
+                    </div>
+                </article>
+            </section>
+
+            <section id="dashboard" class="tab-panel" role="tabpanel" aria-hidden="true">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value" id="athlete-count">0</span>
+                        <span class="stat-label">Athlètes actifs</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="weekly-sessions">4</span>
+                        <span class="stat-label">Séances / semaine</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="total-sessions">0</span>
+                        <span class="stat-label">Séances réalisées</span>
+                    </div>
+                </div>
+
+                <div class="stat-panel">
+                    <div class="stat-panel-header">
+                        <div>
+                            <h2>Performance globale</h2>
+                            <p>Suivez la progression des athlètes et comparez les performances sur plusieurs séances.</p>
+                        </div>
+                        <button type="button" class="secondary-btn" id="refresh-chart">Relancer le graphique</button>
+                    </div>
+                    <div class="chart-card">
+                        <canvas id="trainingChart" width="700" height="320" aria-label="Graphique de charge d'entraînement"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-split">
+                    <div class="chart-panel">
+                        <div class="detail-header">
+                            <div>
+                                <h2>Progression</h2>
+                                <p>Courbe de performance moyenne des athlètes dans le temps.</p>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="progressChart" width="700" height="280" aria-label="Graphique de progression des athlètes"></canvas>
+                        </div>
+                    </div>
+                    <div class="goal-list">
+                        <article class="goal-card">
+                            <h3>Puissance</h3>
+                            <p>Idéaliser chaque séance pour augmenter le seuil et les vitesses en course.</p>
+                        </article>
+                        <article class="goal-card">
+                            <h3>Endurance</h3>
+                            <p>Renforcer les sorties longues avec une récupération active maîtrisée.</p>
+                        </article>
+                        <article class="goal-card">
+                            <h3>Qualité</h3>
+                            <p>Collecter et analyser chaque performance pour ajuster le plan.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section id="athletes" class="tab-panel" role="tabpanel" aria-hidden="true">
+                <div class="athlete-grid">
+                    <article class="card">
+                        <div class="detail-header">
+                            <div>
+                                <h2>Formulaire de performance</h2>
+                                <p>Ajoutez une performance manuelle ou importez une photo Strava.</p>
+                            </div>
+                        </div>
+                        <form id="performance-form">
+                            <div class="input-grid">
+                                <label>
+                                    Nom de l'athlète
+                                    <input type="text" name="name" required placeholder="Ex : Camille" />
+                                </label>
+                                <label>
+                                    Date
+                                    <input type="date" name="date" required />
+                                </label>
+                                <label>
+                                    Distance (km)
+                                    <input type="number" step="0.1" name="distance" required placeholder="20.5" />
+                                </label>
+                                <label>
+                                    Durée (min)
+                                    <input type="number" step="1" name="duration" required placeholder="95" />
+                                </label>
+                                <label>
+                                    Vitesse moyenne (km/h)
+                                    <input type="number" step="0.1" name="speed" placeholder="Optionnel" />
+                                </label>
+                                <label>
+                                    Photo Strava
+                                    <input type="file" name="photo" accept="image/*" />
+                                </label>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn">Ajouter la performance</button>
+                                <button type="button" class="secondary-btn" id="clear-form">Effacer</button>
+                            </div>
+                            <p class="hint-text">Si la photo contient une indication de distance et de temps, l'application fera une estimation automatique.</p>
+                        </form>
+                    </article>
+
+                    <article class="card" id="session-upload-card" hidden>
+                        <div class="detail-header">
+                            <div>
+                                <h2>Déposer des séances</h2>
+                                <p>Importez un fichier JSON pour attribuer un plan à un athlète.</p>
+                            </div>
+                        </div>
+                        <form id="session-upload-form">
+                            <label>
+                                Fichier de séances
+                                <input type="file" id="session-file-input" accept=".json,.csv" required />
+                            </label>
+                            <label>
+                                Athlète ciblé
+                                <select id="athlete-selector">
+                                    <option value="">Sélectionner un athlète</option>
+                                </select>
+                            </label>
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn">Importer les séances</button>
+                            </div>
+                            <p class="hint-text">Fichier JSON ou CSV. CSV attendu avec colonnes athlete,day,title,duration,intensity,workout,description.</p>
+                        </form>
+                    </article>
+
+                    <article class="card" id="admin-athlete-list-card" hidden>
+                        <div class="detail-header">
+                            <div>
+                                <h2>Comptes athlètes</h2>
+                                <p>Voir les athlètes enregistrés et leurs séances attribuées.</p>
+                            </div>
+                        </div>
+                        <div class="session-list" id="athlete-account-list">
+                            <p class="hint-text">Aucun compte athlète enregistré pour le moment.</p>
+                        </div>
+                    </article>
+
+                    <article class="card" id="assigned-sessions-section" hidden>
+                        <div class="detail-header">
+                            <div>
+                                <h2>Séances assignées</h2>
+                                <p>Votre plan est visible ici après import.</p>
+                            </div>
+                        </div>
+                        <div class="session-list" id="assigned-sessions-list">
+                            <p class="hint-text">Aucune séance assignée pour le moment.</p>
+                        </div>
+                    </article>
+
+                    <article class="card">
+                        <div class="detail-header">
+                            <div>
+                                <h2>Vue d'ensemble</h2>
+                                <p>Suivi des athlètes et premier aperçu des tendances.</p>
+                            </div>
+                        </div>
+                        <div class="stats-grid athlete-stats-grid">
+                            <div class="stat-card">
+                                <span class="stat-value" id="athlete-total">0</span>
+                                <span class="stat-label">Athlètes</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="best-speed">0</span>
+                                <span class="stat-label">Vitesse max</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="total-entries">0</span>
+                                <span class="stat-label">Enregistrements</span>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="athleteProgressChart" width="600" height="260" aria-label="Graphique de progression individuelle"></canvas>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="table-panel">
+                    <div class="detail-header">
+                        <div>
+                            <h2>Tableau des athlètes</h2>
+                            <p>Chaque performance saisie est ajoutée au tableau.</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="athlete-table" id="athlete-table">
+                            <thead>
+                                <tr>
+                                    <th>Athlète</th>
+                                    <th>Date</th>
+                                    <th>Distance</th>
+                                    <th>Durée</th>
+                                    <th>Vitesse</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script defer src="script.js"></script>
+</body>
+</html>

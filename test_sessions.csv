@@ -1,0 +1,8 @@
+athlete,day,title,duration,intensity,workout,description
+NOM_ATHLETE_1,Lundi,Natation Endurance,45 min,Z2,"2000m échauffement / 8x200m @ 1'45'' / 1000m récupération","Développement de l'endurance en natation"
+NOM_ATHLETE_1,Mardi,Entraînement Vélo Intervals,1h15,Z4,"15min Warm-up / 6x (3min @ 110% FTP + 3min récupération) / 10min Cool-down","Améliorer la puissance brute"
+NOM_ATHLETE_1,Mercredi,Course à Pied Tempo,50 min,Z3,"10min échauffement / 30min tempo @ 4'30''/km / 10min récupération","Travail au seuil en course à pied"
+NOM_ATHLETE_1,Jeudi,Préparation Physique Générale,30 min,Z0,"Circuit musculation : squats, pompes, gainage","Renforcement musculaire général"
+NOM_ATHLETE_1,Vendredi,Repos Actif,20 min,Z0,"Marche légère ou yoga","Récupération active"
+NOM_ATHLETE_1,Samedi,Vélo Sortie Longue,3h00,Z2,"Sortie longue en endurance","Développement de l'endurance"
+NOM_ATHLETE_1,Dimanche,Natation Technique,40 min,Z1,"2000m technique brasse et crawl","Amélioration technique"

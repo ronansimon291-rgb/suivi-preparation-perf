@@ -316,7 +316,11 @@ function saveAssignedPrograms() {
 function saveAthleteEntryToDatabase(entry) {
     if (typeof db === 'undefined') {
         console.error('Firebase non initialisé. Vérifiez firebase-config.js');
-        athleteEntries.unshift(entry);
+        return;
+    }
+    
+    if (!currentUser) {
+        console.error('Utilisateur non authentifié');
         return;
     }
     
@@ -326,10 +330,11 @@ function saveAthleteEntryToDatabase(entry) {
         username: currentUser.username,
         displayName: currentUser.displayName,
         timestamp: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        console.log('Performance enregistrée avec succès:', entryId);
     }).catch(error => {
         console.error('Erreur enregistrement Firebase:', error);
-        // Fallback local si Firebase échoue
-        athleteEntries.unshift(entry);
+        alert(`Erreur lors de la sauvegarde: ${error.message}`);
     });
 }
 
@@ -827,6 +832,12 @@ function resetForm() {
 
 function handleFormSubmit(event) {
     event.preventDefault();
+    
+    if (!currentUser) {
+        alert('Vous devez être connecté pour enregistrer une performance.');
+        return;
+    }
+    
     const formData = new FormData(performanceForm);
     let name = formData.get('name').trim();
     const date = formData.get('date');

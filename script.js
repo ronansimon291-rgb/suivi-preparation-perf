@@ -154,7 +154,7 @@ function getAverageSpeed(distance, duration, manualSpeed) {
 
 function addPerformanceEntry(entry) {
     athleteEntries.unshift(entry);
-    saveAthleteEntriesToStorage();
+    saveAthleteEntryToDatabase(entry);
     updateAthleteTable();
     updateCoachStats();
     drawProgressChart();
@@ -176,7 +176,7 @@ function setActiveTab(tabId) {
 
 function getVisibleEntries() {
     if (currentUser && currentUser.role === 'athlete') {
-        return athleteEntries.filter(entry => entry.name.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase());
+        return athleteEntries.filter(entry => entry.username === currentUser.username);
     }
     return athleteEntries;
 }
@@ -262,13 +262,28 @@ function closeLoginScreen() {
     document.body.classList.remove('no-scroll');
 }
 
-function saveUserToStorage() {
+// 🔥 FIREBASE - Sauvegarder la session utilisateur
+function saveUserToDatabase() {
+    if (currentUser && typeof db !== 'undefined') {
+        db.ref('users').child(currentUser.username).set({
+            username: currentUser.username,
+            displayName: currentUser.displayName,
+            role: currentUser.role,
+            lastLogin: firebase.database.ServerValue.TIMESTAMP
+        }).catch(error => {
+            console.error('Erreur sauvegarde utilisateur:', error);
+        });
+    }
+    // Garder aussi en localStorage pour accès rapide
     if (currentUser) {
         localStorage.setItem('suivi-athlete-user', JSON.stringify({ username: currentUser.username }));
     }
 }
 
-function saveAccountsToStorage() {
+// 🔥 FIREBASE - Sauvegarder les comptes athlètes
+function saveAccountsToDatabase() {
+    if (typeof db === 'undefined') return;
+    
     const storedAccounts = {};
     Object.entries(accounts).forEach(([key, account]) => {
         if (defaultAccounts[key] && defaultAccounts[key].role === 'admin') {
@@ -279,28 +294,67 @@ function saveAccountsToStorage() {
             storedAccounts[key] = account;
         }
     });
+    
+    db.ref('accounts').set(storedAccounts).catch(error => {
+        console.error('Erreur sauvegarde comptes:', error);
+    });
+    
+    // Aussi localStorage
     localStorage.setItem('suivi-athlete-accounts', JSON.stringify(storedAccounts));
 }
 
 function saveAssignedPrograms() {
     localStorage.setItem('suivi-athlete-programs', JSON.stringify(assignedPrograms));
-}
-
-function saveAthleteEntriesToStorage() {
-    localStorage.setItem('suivi-athlete-entries', JSON.stringify(athleteEntries));
-}
-
-function loadAthleteEntriesFromStorage() {
-    try {
-        const stored = localStorage.getItem('suivi-athlete-entries');
-        if (!stored) return;
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-            athleteEntries = parsed;
-        }
-    } catch (error) {
-        console.warn('Impossible de charger les séances enregistrées', error);
+    if (typeof db !== 'undefined') {
+        db.ref('assignedPrograms').set(assignedPrograms).catch(error => {
+            console.error('Erreur sauvegarde séances assignées:', error);
+        });
     }
+}
+
+// 🔥 FIREBASE - Enregistrer une performance
+function saveAthleteEntryToDatabase(entry) {
+    if (typeof db === 'undefined') {
+        console.error('Firebase non initialisé. Vérifiez firebase-config.js');
+        athleteEntries.unshift(entry);
+        return;
+    }
+    
+    const entryId = Date.now().toString();
+    db.ref('performances').child(entryId).set({
+        ...entry,
+        username: currentUser.username,
+        displayName: currentUser.displayName,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    }).catch(error => {
+        console.error('Erreur enregistrement Firebase:', error);
+        // Fallback local si Firebase échoue
+        athleteEntries.unshift(entry);
+    });
+}
+
+// 🔥 FIREBASE - Écouter les performances en temps réel
+function listenToAthleteEntries() {
+    if (typeof db === 'undefined') {
+        console.error('Firebase non initialisé');
+        return;
+    }
+    
+    db.ref('performances').orderByChild('timestamp').on('value', (snapshot) => {
+        athleteEntries = [];
+        snapshot.forEach(childSnapshot => {
+            const entry = childSnapshot.val();
+            athleteEntries.unshift(entry);
+        });
+        updateAthleteTable();
+        updateCoachStats();
+        if (currentUser && currentUser.role === 'admin') {
+            drawProgressChart();
+            drawAthleteProgressChart();
+        }
+    }, (error) => {
+        console.error('Erreur lecture Firebase:', error);
+    });
 }
 
 function loadAccountsFromStorage() {
@@ -369,11 +423,38 @@ function loadAssignedPrograms() {
     }
 }
 
-function loadUserFromStorage() {
+// 🔥 FIREBASE - Charger les données depuis Firebase
+function loadUserFromDatabase() {
     loadAccountsFromStorage();
     loadAssignedPrograms();
-    loadAthleteEntriesFromStorage();
+    
+    // Écouter les performances en temps réel
+    listenToAthleteEntries();
+    
+    // Écouter les nouveaux comptes athlètes
+    if (typeof db !== 'undefined') {
+        db.ref('accounts').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                Object.assign(accounts, data);
+            }
+            populateAthleteSelector();
+            renderAthleteAccounts();
+        });
+
+        db.ref('assignedPrograms').on('value', (snapshot) => {
+            const data = snapshot.val();
+            Object.keys(assignedPrograms).forEach(key => delete assignedPrograms[key]);
+            if (data) {
+                Object.assign(assignedPrograms, data);
+            }
+            renderAssignedSessions(currentUser?.username || athleteSelector.value || '');
+            renderAthleteAccounts();
+        });
+    }
+    
     populateAthleteSelector();
+    renderAthleteAccounts();
     const stored = localStorage.getItem('suivi-athlete-user');
     if (!stored) {
         openLoginScreen();
@@ -412,7 +493,7 @@ function handleLogin(event) {
     currentUser = { username, ...account };
     loginError.textContent = '';
     closeLoginScreen();
-    saveUserToStorage();
+    saveUserToDatabase();
     populateAthleteSelector();
     updateUserContext();
     updateAthleteTable();
@@ -445,7 +526,7 @@ function handleRegister(event) {
     }
 
     accounts[username] = { password, displayName, role: 'athlete' };
-    saveAccountsToStorage();
+    saveAccountsToDatabase();
     populateAthleteSelector();
     registerForm.reset();
     toggleAuthMode('login');
@@ -822,7 +903,7 @@ function initEvents() {
 
 window.addEventListener('DOMContentLoaded', () => {
     initEvents();
-    loadUserFromStorage();
+    loadUserFromDatabase();
     updateSession('Lundi');
     drawTrainingChart(true);
     drawProgressChart();

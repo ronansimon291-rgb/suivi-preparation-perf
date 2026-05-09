@@ -55,6 +55,10 @@
                         Confirmer mot de passe
                         <input type="password" name="confirmPassword" autocomplete="new-password" required />
                     </label>
+                    <label>
+                        Photo de profil (optionnel)
+                        <input type="file" name="profilePhoto" accept="image/*" />
+                    </label>
                     <div class="form-actions">
                         <button type="submit" class="primary-btn">Créer le compte</button>
                     </div>
@@ -67,9 +71,12 @@
 
     <div class="app-shell">
         <div class="user-banner" id="user-banner" hidden>
-            <div>
-                <span id="user-name"></span>
-                <span class="user-role" id="user-role"></span>
+            <div class="profile-section">
+                <img id="profile-photo" class="profile-avatar" alt="Photo de profil" />
+                <div>
+                    <span id="user-name"></span>
+                    <span class="user-role" id="user-role"></span>
+                </div>
             </div>
             <button type="button" class="secondary-btn" id="logout-btn">Déconnexion</button>
         </div>
@@ -372,6 +379,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <script defer src="firebase-config.js"></script>
     <script defer src="script.js"></script>

@@ -803,3 +803,48 @@ canvas {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.user-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 20px;
+    margin: 0 0 24px;
+    background: var(--surface-strong);
+    border-radius: 8px;
+    border: 1px solid rgba(61, 208, 255, 0.1);
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface);
+    border: 2px solid var(--cyan);
+}
+
+.user-banner > div:not(.profile-section) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#user-name {
+    font-weight: 600;
+    color: var(--white);
+}
+
+.user-role {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

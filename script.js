@@ -104,6 +104,7 @@ const logoutBtn = document.getElementById('logout-btn');
 const userBanner = document.getElementById('user-banner');
 const userNameDisplay = document.getElementById('user-name');
 const userRoleDisplay = document.getElementById('user-role');
+const profilePhoto = document.getElementById('profile-photo');
 const sessionUploadCard = document.getElementById('session-upload-card');
 const sessionUploadForm = document.getElementById('session-upload-form');
 const sessionFileInput = document.getElementById('session-file-input');
@@ -213,6 +214,10 @@ function updateUserContext() {
     userBanner.hidden = false;
     userNameDisplay.textContent = `Connecté : ${currentUser.displayName}`;
     userRoleDisplay.textContent = currentUser.role === 'admin' ? 'Entraîneur' : 'Athlète';
+    
+    // Charger la photo de profil
+    loadProfilePhoto(currentUser.username);
+    
     sessionUploadCard.hidden = currentUser.role !== 'admin';
     adminAthleteListCard.hidden = currentUser.role !== 'admin';
     assignedSessionsSection.hidden = false;
@@ -505,6 +510,49 @@ function handleLogin(event) {
     updateCoachStats();
 }
 
+// 🔥 FIREBASE - Uploader la photo de profil
+async function uploadProfilePhoto(file, username) {
+    if (typeof firebase === 'undefined' || !firebase.storage) {
+        console.error('Firebase Storage non initialisé');
+        return null;
+    }
+    
+    try {
+        const storageRef = firebase.storage().ref();
+        const fileRef = storageRef.child(`profiles/${username}/${file.name}`);
+        await fileRef.put(file);
+        const photoURL = await fileRef.getDownloadURL();
+        return photoURL;
+    } catch (error) {
+        console.error('Erreur upload photo:', error);
+        return null;
+    }
+}
+
+// Charger et afficher la photo de profil
+async function loadProfilePhoto(username) {
+    if (typeof firebase === 'undefined' || !firebase.storage || !profilePhoto) {
+        return;
+    }
+    
+    try {
+        const storageRef = firebase.storage().ref();
+        const fileRef = storageRef.child(`profiles/${username}/`);
+        const result = await fileRef.listAll();
+        
+        if (result.items.length > 0) {
+            const photoURL = await result.items[0].getDownloadURL();
+            profilePhoto.src = photoURL;
+            profilePhoto.style.display = 'block';
+        } else {
+            profilePhoto.style.display = 'none';
+        }
+    } catch (error) {
+        console.warn('Impossible de charger la photo:', error);
+        profilePhoto.style.display = 'none';
+    }
+}
+
 function handleRegister(event) {
     event.preventDefault();
     const formData = new FormData(registerForm);
@@ -512,6 +560,7 @@ function handleRegister(event) {
     const username = formData.get('newUsername').trim().toLowerCase();
     const password = formData.get('newPassword');
     const confirmPassword = formData.get('confirmPassword');
+    const profilePhotoFile = formData.get('profilePhoto');
 
     if (!displayName || !username || !password || !confirmPassword) {
         registerError.textContent = 'Tous les champs sont requis.';
@@ -531,7 +580,20 @@ function handleRegister(event) {
     }
 
     accounts[username] = { password, displayName, role: 'athlete' };
-    saveAccountsToDatabase();
+    
+    // Upload photo si fournie
+    if (profilePhotoFile && profilePhotoFile.size > 0) {
+        uploadProfilePhoto(profilePhotoFile, username).then(photoURL => {
+            if (photoURL) {
+                accounts[username].photoURL = photoURL;
+                console.log('Photo de profil uploadée:', photoURL);
+            }
+            saveAccountsToDatabase();
+        });
+    } else {
+        saveAccountsToDatabase();
+    }
+    
     populateAthleteSelector();
     registerForm.reset();
     toggleAuthMode('login');

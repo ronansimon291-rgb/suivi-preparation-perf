@@ -17,3 +17,6 @@ firebase.initializeApp(firebaseConfig);
 
 // Référence à la base de données
 const db = firebase.database();
+
+// Référence à Firebase Storage
+const storage = firebase.storage();
